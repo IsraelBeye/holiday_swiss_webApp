@@ -3,6 +3,10 @@
 
 This web app displays holiday data for Swiss cantons. Users can filter the data by selecting a specific canton and year. The app provides a table view of the holiday information and an interactive map showing the location of the selected canton.
 
+## Example
+![image](https://github.com/IsraelBeye/holiday_swiss_webApp/assets/139361273/1d47dad2-c8b8-4fd6-820b-0b2df30fb8f6)
+
+
 ## Prerequisites
 
 - Python 3.x
