@@ -1,4 +1,3 @@
-# holiday_swiss_webApp
 # Holiday Web App
 
 This web app displays holiday data for Swiss cantons. Users can filter the data by selecting a specific canton and year. The app provides a table view of the holiday information and an interactive map showing the location of the selected canton.
