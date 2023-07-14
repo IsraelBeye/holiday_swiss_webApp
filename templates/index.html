@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Holiday Table</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
+<style>
+	body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+    }
+
+    h1 {
+        margin-top: 0;
+        text-align: center;
+    }
+
+    #filter-container {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    #map-container {
+        height: 300px;
+        margin-bottom: 10px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+        background-color: #D6EEEE !important;
+        color: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+        padding: 10px;
+        border: 1px solid #ccc;
+		color:white;
+    }
+
+    th {
+        background-color: #f0f0f0;
+        font-weight: bold;
+        color: #D6EEEE;
+    }
+
+    .selected-kanton {
+        background-color: #ffd700;
+        font-weight: bold;
+        padding: 10px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .swiss-flag {
+        width: 50px;
+        height: 30px;
+        background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Flag_of_Switzerland_%28Pantone%29.svg/2560px-Flag_of_Switzerland_%28Pantone%29.svg.png");
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
+        display: inline-block;
+        vertical-align: middle;
+    }
+</style>
+</head>
+
+<body>
+    <h1>Holiday Table</h1>
+    <div id="filter-container">
+        <form action="/" method="get">
+            <label for="kanton-select">Select Kanton:</label>
+            <select id="kanton-select" name="kanton">
+                <option value="">All</option>
+                {% for kanton in kantons %}
+                <option value="{{ kanton }}" {% if kanton == selected_kanton %}selected{% endif %}>{{ kanton }}</option>
+                {% endfor %}
+            </select>
+            <label for="year-select">Select Year:</label>
+            <select id="year-select" name="year">
+                <option value="">All</option>
+                {% for year in years %}
+                <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Apply Filter</button>
+        </form>
+    </div>
+    {% if selected_kanton and selected_latitude and selected_longitude %}
+    <div id="selected-kanton-info" class="selected-kanton">
+        <h2>{{ selected_kanton }} <span class="swiss-flag"></span></h2>
+        <p>Latitude: {{ selected_latitude }}</p>
+        <p>Longitude: {{ selected_longitude }}</p>
+    </div>
+    <div id="map-container"></div>
+    {% endif %}
+    <table>
+        <thead>
+            <tr>
+                
+                <th>Year</th>
+                <th>Month</th>
+                <th>Business Days</th>
+                
+                <th>Kanton</th>
+                <th>holidays Including Weekends</th>
+                <th>Holidays</th>
+                <th>Holidays Excluding Weekends</th>
+				<th>Corrected Business Days</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in table_data %}
+            <tr>
+                
+                <td>{{ row['Year'] }}</td>
+                <td>{{ row['Month'] }}</td>
+                <td>{{ row['BusinessDays'] }}</td>
+                
+                <td>{{ row['kanton'] }}</td>
+                <td>{{ row['holiday_includingWeekend'] }}</td>
+                <td>{{ row['holiday'] }}</td>
+                <td>{{ row['holiday_excludingWeekend'] }}</td>  
+				<td>{{ row['Corrected_BusinessDays'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        {% if selected_kanton and selected_latitude and selected_longitude %}
+        // JavaScript code to initialize the map and add a tile layer
+        var map = L.map('map-container').setView([{{ selected_latitude }}, {{ selected_longitude }}], 8);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+            maxZoom: 18,
+        }).addTo(map);
+        L.marker([{{ selected_latitude }}, {{ selected_longitude }}]).addTo(map).bindPopup("{{ selected_kanton }}");
+        {% endif %}
+    </script>
+	<style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        #filter-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #map-container {
+            height: 400px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            color: #333;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        .selected-kanton {
+            background-color: #ffd700;
+            font-weight: bold;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .swiss-flag {
+            width: 50px;
+            height: 30px;
+            background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Flag_of_Switzerland_%28Pantone%29.svg/2560px-Flag_of_Switzerland_%28Pantone%29.svg.png");
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* Additional CSS styles for the table */
+        table {
+            border-spacing: 0;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+    </style>
+</body>
+</html>
